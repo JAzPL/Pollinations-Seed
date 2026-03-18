@@ -1,4 +1,5 @@
 # Pollinations Seed Plan — Kwalifikator GitHub
+# DEMO: https://app-j.pl/Pollinations/
 
 ![Built with Pollinations](https://img.shields.io/badge/Built%20with-Pollinations-8a2be2?style=for-the-badge&logoColor=white&labelColor=6a0dad)
 
