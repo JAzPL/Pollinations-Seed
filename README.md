@@ -1,28 +1,239 @@
-# Pollinations-Seed
+# Pollinations Seed Plan — Kwalifikator GitHub
 
-# Opis po polsku (PL)
-✅ Ten skrypt pozwala sprawdzić kwalifikowalność konta GitHub do planu Seed w usłudze Pollinations.
+![Built with Pollinations](https://img.shields.io/badge/Built%20with-Pollinations-8a2be2?style=for-the-badge&logoColor=white&labelColor=6a0dad)
 
-✅ Program analizuje cztery kluczowe metryki: wiek konta, liczbę commitów, publiczne repozytoria oraz otrzymane gwiazdki.
+> Skrypt sprawdza, czy profil GitHub spełnia kryteria kwalifikacji do programu **Pollinations Seed Plan**, wyświetla aktualny poziom użytkownika oraz generuje spersonalizowaną poradę motywacyjną z pomocą AI.
 
-✅ Wynik końcowy jest sumowany automatycznie, a próg kwalifikacji wynosi 8 na 14 możliwych punktów.
+---
 
-✅ Narzędzie wyświetla szczegółowe statystyki i informuje, ile punktów brakuje do uzyskania darmowego ulepszenia.
+## 🇵🇱 Polski
 
-# Description in English (GB)
-✅ This script allows you to check your GitHub account's eligibility for the Pollinations Seed plan.
+### Opis
 
-✅ The program analyses four key metrics: account age, total commits, public repositories, and stars received.
+Narzędzie analizuje publiczny profil GitHub podanego użytkownika, przelicza punkty według systemu oceny Pollinations Seed Plan i pokazuje:
 
-✅ The final score is calculated automatically, with a qualification threshold of 8 out of 14 possible points.
+- aktualny **poziom** (1–5) z kolorowym oznaczeniem,
+- **miniwykres słupkowy** czterech kategorii punktowych,
+- **pasek postępu** w kierunku kwalifikacji (próg: 8 pkt),
+- ile punktów brakuje **do kolejnego poziomu** i **do kwalifikacji**,
+- **poradę motywacyjną** wygenerowaną przez AI (model `perplexity-reasoning` przez Pollinations API).
 
-✅ The tool displays detailed statistics and informs you exactly how many points are needed to qualify for the upgrade.
+Użytkownik nie widzi surowych danych statystycznych — wyłącznie poziom, braki i tekst od AI.
 
-# Beschreibung auf Deutsch (DE)
-✅ Dieses Skript ermöglicht es Ihnen, die Berechtigung Ihres GitHub-Kontos für den Pollinations Seed-Plan zu prüfen.
+### System punktacji
 
-✅ Das Programm analysiert vier wichtige Kennzahlen: das Kontoalter, die Anzahl der Commits, öffentliche Repositories und erhaltene Sterne.
+| Kategoria         | Przelicznik              | Maks. punktów |
+|-------------------|--------------------------|---------------|
+| Wiek konta        | miesiące × 0,5           | 6,0           |
+| Gwiazdki GitHub   | gwiazdki × 0,1           | 5,0           |
+| Commity           | commity × 0,1            | 2,0           |
+| Publiczne repo    | repo × 0,5               | 1,0           |
+| **Łącznie**       |                          | **14,0**      |
+| **Próg kwalifikacji** |                      | **8,0**       |
 
-✅ Die Gesamtpunktzahl wird automatisch berechnet, wobei die Qualifikationsschwelle bei 8 von 14 möglichen Punkten liegt.
+### Poziomy
 
-✅ Das Tool zeigt detaillierte Statistiken an und informiert darüber, wie viele Punkte noch für das kostenlose Upgrade fehlen.
+| Poziom | Nazwa                | Próg punktów |
+|--------|----------------------|--------------|
+| 1      | Początkujący         | 0–2          |
+| 2      | Amator               | 2–4          |
+| 3      | Średniozaawansowany  | 4–6          |
+| 4      | Zaawansowany         | 6–8          |
+| 5      | Zakwalifikowany 🎉   | 8+           |
+
+### Integracja AI
+
+- Model: **`perplexity-reasoning`** przez [Pollinations API](https://gen.pollinations.ai) (darmowy, dostęp do internetu)
+- Endpoint: `POST https://gen.pollinations.ai/v1/chat/completions`
+- Porada ładuje się **asynchronicznie (AJAX)** — strona jest widoczna od razu, tekst AI pojawia się po ~15–30 sek.
+- Wynik jest **cache'owany w sesji** (ten sam użytkownik + język = brak ponownego wywołania API)
+- Przycisk **🔄 Odśwież poradę** czyści cache i generuje nową odpowiedź
+
+### Dodatkowe funkcje
+
+- 🌐 Obsługa języków: Polski, English, Deutsch
+- 🖼️ Avatar GitHub użytkownika
+- 🎉 Animacja confetti przy kwalifikacji (poziom 5)
+- 🔄 Przycisk ręcznego odświeżenia porady AI
+- 📊 Miniwykres słupkowy kategorii
+- 🔑 Klucz API Pollinations wpisywany bezpośrednio na stronie (zapisywany w sesji, maskowany, z przyciskiem podglądu i czyszczenia)
+- 🏷️ Odznaka „Built with Pollinations" wyświetlana obok nazwy użytkownika w wynikach
+- 🌐 Favicon logo Pollinations w karcie przeglądarki
+
+### Wymagania
+
+- PHP ≥ 7.4 z rozszerzeniami: `curl`, `json`, `session`
+- Serwer HTTP (Apache, Nginx lub PHP built-in)
+- Połączenie z internetem (GitHub API + Pollinations API)
+
+### Instalacja i uruchomienie
+
+```bash
+# Sklonuj lub skopiuj plik index.php do katalogu serwera
+# Uruchom serwer PHP (lokalnie):
+php -S localhost:8080
+
+# Otwórz w przeglądarce:
+# http://localhost:8080
+```
+
+### Uwagi
+
+- GitHub API bez tokenu pozwala na ~60 zapytań/h — przy intensywnym użytkowaniu warto dodać token w nagłówku `Authorization: Bearer TWOJ_TOKEN`.
+- Model `perplexity-reasoning` może odpowiadać 15–50 sekund. Spinner informuje użytkownika o oczekiwaniu.
+
+---
+
+## 🇬🇧 English
+
+### Description
+
+This tool analyzes a public GitHub user profile, calculates points according to the Pollinations Seed Plan scoring system, and displays:
+
+- current **level** (1–5) with color-coded badge,
+- **mini bar chart** of four scoring categories,
+- **progress bar** toward qualification (threshold: 8 pts),
+- how many points are missing **to the next level** and **to qualify**,
+- a **motivational guide** generated by AI (`perplexity-reasoning` model via Pollinations API).
+
+The user never sees raw statistics — only the level, missing points, and the AI text.
+
+### Scoring System
+
+| Category          | Formula                  | Max points |
+|-------------------|--------------------------|------------|
+| Account age       | months × 0.5             | 6.0        |
+| GitHub stars      | stars × 0.1              | 5.0        |
+| Commits           | commits × 0.1            | 2.0        |
+| Public repos      | repos × 0.5              | 1.0        |
+| **Total**         |                          | **14.0**   |
+| **Qualification** |                          | **8.0**    |
+
+### Levels
+
+| Level | Name          | Points threshold |
+|-------|---------------|------------------|
+| 1     | Beginner      | 0–2              |
+| 2     | Amateur       | 2–4              |
+| 3     | Intermediate  | 4–6              |
+| 4     | Advanced      | 6–8              |
+| 5     | Qualified 🎉  | 8+               |
+
+### AI Integration
+
+- Model: **`perplexity-reasoning`** via [Pollinations API](https://gen.pollinations.ai) (free, internet-enabled)
+- Endpoint: `POST https://gen.pollinations.ai/v1/chat/completions`
+- Advice loads **asynchronously (AJAX)** — the page renders immediately, AI text appears after ~15–30 sec.
+- Results are **session-cached** (same user + language = no repeated API call)
+- **🔄 Refresh advice** button clears cache and generates a new response
+
+### Additional Features
+
+- 🌐 Multilingual: Polish, English, German
+- 🖼️ GitHub user avatar
+- 🎉 Confetti animation on qualification (level 5)
+- 🔄 Manual AI advice refresh button
+- 📊 Mini bar chart per category
+- 🔑 Pollinations API key entered directly on the page (stored in session, masked input with show/clear button)
+- 🏷️ "Built with Pollinations" badge displayed next to the username in results
+- 🌐 Pollinations logo favicon in the browser tab
+
+### Requirements
+
+- PHP ≥ 7.4 with extensions: `curl`, `json`, `session`
+- HTTP server (Apache, Nginx or PHP built-in)
+- Internet access (GitHub API + Pollinations API)
+
+### Installation & Usage
+
+```bash
+# Copy index.php to your web server directory
+# Or run PHP built-in server locally:
+php -S localhost:8080
+
+# Open in browser:
+# http://localhost:8080
+```
+
+### Notes
+
+- GitHub API without a token allows ~60 requests/h. For heavy usage, add `Authorization: Bearer YOUR_TOKEN` to the request headers.
+- The `perplexity-reasoning` model may take 15–50 seconds to respond. A spinner keeps the user informed during this time.
+
+---
+
+## 🇩🇪 Deutsch
+
+### Beschreibung
+
+Dieses Tool analysiert ein öffentliches GitHub-Profil, berechnet Punkte nach dem Pollinations Seed Plan Bewertungssystem und zeigt:
+
+- aktuelles **Level** (1–5) mit farbiger Badge,
+- **Mini-Balkendiagramm** der vier Punktekategorien,
+- **Fortschrittsbalken** zur Qualifikation (Schwelle: 8 Pkt.),
+- wie viele Punkte **zum nächsten Level** und **zur Qualifikation** fehlen,
+- einen **motivierenden Ratgeber** vom KI-Modell `perplexity-reasoning` über die Pollinations API.
+
+Der Nutzer sieht keine Rohdaten — nur Level, fehlende Punkte und den KI-Text.
+
+### Punktesystem
+
+| Kategorie          | Formel                    | Max. Punkte |
+|--------------------|---------------------------|-------------|
+| Kontoalter         | Monate × 0,5              | 6,0         |
+| GitHub-Sterne      | Sterne × 0,1              | 5,0         |
+| Commits            | Commits × 0,1             | 2,0         |
+| Öffentliche Repos  | Repos × 0,5               | 1,0         |
+| **Gesamt**         |                           | **14,0**    |
+| **Qualifikation**  |                           | **8,0**     |
+
+### Level-System
+
+| Level | Name              | Punkteschwelle |
+|-------|-------------------|----------------|
+| 1     | Anfänger          | 0–2            |
+| 2     | Amateur           | 2–4            |
+| 3     | Fortgeschrittener | 4–6            |
+| 4     | Experte           | 6–8            |
+| 5     | Qualifiziert 🎉   | 8+             |
+
+### KI-Integration
+
+- Modell: **`perplexity-reasoning`** über [Pollinations API](https://gen.pollinations.ai) (kostenlos, internetfähig)
+- Endpunkt: `POST https://gen.pollinations.ai/v1/chat/completions`
+- Ratschlag wird **asynchron (AJAX)** geladen — die Seite erscheint sofort, der KI-Text nach ~15–30 Sek.
+- Ergebnisse werden **in der Session gecacht** (gleicher Nutzer + Sprache = kein erneuter API-Aufruf)
+- **🔄 Ratschlag aktualisieren** löscht den Cache und generiert eine neue Antwort
+
+### Weitere Funktionen
+
+- 🌐 Mehrsprachig: Polnisch, Englisch, Deutsch
+- 🖼️ GitHub-Avatar des Nutzers
+- 🎉 Konfetti-Animation bei Qualifikation (Level 5)
+- 🔄 Manueller KI-Aktualisierungsknopf
+- 📊 Mini-Balkendiagramm pro Kategorie
+- 🔑 Pollinations API-Schlüssel direkt auf der Seite eingeben (in Session gespeichert, maskiertes Eingabefeld mit Anzeige- und Löschfunktion)
+- 🏷️ „Built with Pollinations"-Badge neben dem Benutzernamen in den Ergebnissen
+- 🌐 Pollinations-Logo als Favicon im Browser-Tab
+
+### Voraussetzungen
+
+- PHP ≥ 7.4 mit Erweiterungen: `curl`, `json`, `session`
+- HTTP-Server (Apache, Nginx oder PHP built-in)
+- Internetzugang (GitHub API + Pollinations API)
+
+### Installation & Verwendung
+
+```bash
+# index.php in das Webserver-Verzeichnis kopieren
+# Oder PHP-eigenen Server starten:
+php -S localhost:8080
+
+# Im Browser öffnen:
+# http://localhost:8080
+```
+
+### Hinweise
+
+- Die GitHub API erlaubt ohne Token ~60 Anfragen/Std. Bei intensiver Nutzung empfiehlt sich ein Token im Header `Authorization: Bearer DEIN_TOKEN`.
+- Das Modell `perplexity-reasoning` kann 15–50 Sekunden brauchen. Ein Spinner informiert den Nutzer über die Wartezeit.
