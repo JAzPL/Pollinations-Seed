@@ -17,7 +17,7 @@ $jezyki = [
         'etykieta_uzytkownik' => 'Nazwa użytkownika GitHub:',
         'przycisk'            => 'Sprawdź',
         'aktualny_poziom'     => 'Twój aktualny poziom',
-        'do_kolejnego'        => 'Do kolejnego poziomu brakuje',
+        'do_kolejnego'        => 'Do następnego poziomu',
         'do_kwalifikacji'     => 'Do kwalifikacji brakuje',
         'zakwalifikowany'     => '🎉 Gratulacje! Jesteś zakwalifikowany!',
         'porada_ai'           => '🤖 Twój przewodnik AI',
@@ -38,6 +38,13 @@ $jezyki = [
         'klucz_zapisany'      => '✓ Klucz zapisany w sesji',
         'klucz_brak'          => '⚠ Brak klucza — AI może nie działać',
         'wyczysc_klucz'       => 'Wyczyść',
+        'aktywnosc_ok'        => '✓ Publiczna aktywność w ostatnich 90 dniach: OK',
+        'aktywnosc_brak'      => '⚠ Brak publicznej aktywności w ostatnich 90 dniach — Pollinations może nie uznać kwalifikacji',
+        'wskazowki'           => 'Jak zdobyć więcej punktów',
+        'wskazowka_wiek'      => 'Konto musi mieć ≥12 miesięcy dla pełnych 6 pkt (0.5 pkt/miesiąc)',
+        'wskazowka_gwiazdki'  => 'Publikuj i promuj projekty — każda gwiazdka = 0.1 pkt (maks. 5 pkt)',
+        'wskazowka_commity'   => 'Commituj regularnie — każde 10 commitów = 1 pkt (maks. 2 pkt)',
+        'wskazowka_repo'      => 'Miej ≥2 publiczne repozytoria dla maks. 1 pkt',
         'poziomy'             => [
             1 => 'Początkujący',
             2 => 'Amator',
@@ -51,7 +58,7 @@ $jezyki = [
         'etykieta_uzytkownik' => 'GitHub Username:',
         'przycisk'            => 'Check',
         'aktualny_poziom'     => 'Your current level',
-        'do_kolejnego'        => 'To next level you need',
+        'do_kolejnego'        => 'To next level',
         'do_kwalifikacji'     => 'To qualify you need',
         'zakwalifikowany'     => '🎉 Congratulations! You are qualified!',
         'porada_ai'           => '🤖 Your AI Guide',
@@ -72,6 +79,13 @@ $jezyki = [
         'klucz_zapisany'      => '✓ Key saved in session',
         'klucz_brak'          => '⚠ No key — AI may not work',
         'wyczysc_klucz'       => 'Clear',
+        'aktywnosc_ok'        => '✓ Public activity in last 90 days: OK',
+        'aktywnosc_brak'      => '⚠ No public activity in the last 90 days — Pollinations may not count your qualification',
+        'wskazowki'           => 'How to earn more points',
+        'wskazowka_wiek'      => 'Account must be ≥12 months old for full 6 pts (0.5 pts/month)',
+        'wskazowka_gwiazdki'  => 'Publish & share projects — each star = 0.1 pts (max 5 pts)',
+        'wskazowka_commity'   => 'Commit regularly — every 10 commits = 1 pt (max 2 pts)',
+        'wskazowka_repo'      => 'Have ≥2 public repositories for max 1 pt',
         'poziomy'             => [
             1 => 'Beginner',
             2 => 'Amateur',
@@ -106,6 +120,14 @@ $jezyki = [
         'klucz_zapisany'      => '✓ Schlüssel in Session gespeichert',
         'klucz_brak'          => '⚠ Kein Schlüssel — KI funktioniert möglicherweise nicht',
         'wyczysc_klucz'       => 'Löschen',
+        'do_kolejnego'        => 'Zum nächsten Level',
+        'aktywnosc_ok'        => '✓ Öffentliche Aktivität in den letzten 90 Tagen: OK',
+        'aktywnosc_brak'      => '⚠ Keine öffentliche Aktivität in den letzten 90 Tagen — Pollinations erkennt deine Qualifikation möglicherweise nicht',
+        'wskazowki'           => 'So sammelst du mehr Punkte',
+        'wskazowka_wiek'      => 'Konto muss ≥12 Monate alt sein für volle 6 Pkt (0,5 Pkt/Monat)',
+        'wskazowka_gwiazdki'  => 'Projekte veröffentlichen & teilen — jeder Stern = 0,1 Pkt (max. 5 Pkt)',
+        'wskazowka_commity'   => 'Regelmäßig committen — je 10 Commits = 1 Pkt (max. 2 Pkt)',
+        'wskazowka_repo'      => 'Mindestens 2 öffentliche Repos für max. 1 Pkt',
         'poziomy'             => [
             1 => 'Anfänger',
             2 => 'Amateur',
@@ -177,9 +199,47 @@ function buduj_prompt_ai($jezyk, $login, $miesiace, $pw, $liczba_c, $pc, $liczba
     $fpg  = number_format($pg, 1);
 
     $prompty = [
-        'pl' => "Jestem uzytkownikiem GitHub '{$login}'. W kwalifikacji Pollinations Seed Plan mam {$s} punktow na 14 mozliwych. Moj poziom: {$poziom_nr} ({$nazwa_poziomu}). Punktacja: wiek konta {$miesiace} miesiecy = {$fpw} pkt (maks. 6), commity {$liczba_c} = {$fpc} pkt (maks. 2), repozytoria {$liczba_repo} = {$fpr} pkt (maks. 1), gwiazdki {$suma_gwiazdek} = {$fpg} pkt (maks. 5). Do kwalifikacji (prog 8 pkt) brakuje mi {$b} pkt. Napisz krotki, bardzo motywujacy tekst po polsku oraz konkretny plan dzialan - co dokladnie powinienem zrobic na GitHubie, zeby jak najszybciej zdobyc brakujace punkty. Skupsie na obszarach gdzie mam najmniejszy wspolczynnik punktow wzgledem maksimum. Pisz bezposrednio do mnie.",
-        'en' => "I am GitHub user '{$login}'. In the Pollinations Seed Plan qualification I have {$s} points out of 14 possible. My level: {$poziom_nr} ({$nazwa_poziomu}). Score details: account age {$miesiace} months = {$fpw} pts (max 6), commits {$liczba_c} = {$fpc} pts (max 2), public repos {$liczba_repo} = {$fpr} pts (max 1), GitHub stars {$suma_gwiazdek} = {$fpg} pts (max 5). I need {$b} more points to qualify (threshold: 8 pts). Write a short, highly motivating message in English and a concrete action plan — exactly what I should do on GitHub to gain the missing points as quickly as possible. Focus on areas where I score lowest relative to their maximum. Address me directly.",
-        'de' => "Ich bin GitHub-Nutzer '{$login}'. Bei der Pollinations Seed Plan Qualifikation habe ich {$s} von 14 möglichen Punkten. Mein Level: {$poziom_nr} ({$nazwa_poziomu}). Punktedetails: Kontoalter {$miesiace} Monate = {$fpw} Pkt (max. 6), Commits {$liczba_c} = {$fpc} Pkt (max. 2), öffentliche Repos {$liczba_repo} = {$fpr} Pkt (max. 1), GitHub-Sterne {$suma_gwiazdek} = {$fpg} Pkt (max. 5). Mir fehlen {$b} Punkte zur Qualifikation (Schwelle: 8 Pkt). Schreibe auf Deutsch einen kurzen, stark motivierenden Text und einen konkreten Aktionsplan — was soll ich auf GitHub tun, um die fehlenden Punkte so schnell wie möglich zu sammeln. Fokussiere dich auf Kategorien mit dem größten Verbesserungspotenzial. Sprich mich direkt an.",
+        'pl' => "Jestem uzytkownikiem GitHub '{$login}'. W kwalifikacji Pollinations Seed Plan mam {$s} punktow na 14 mozliwych (prog kwalifikacji: 8 pkt). Moj poziom: {$poziom_nr} ({$nazwa_poziomu}). Brakuje mi {$b} pkt.
+
+Moje wyniki w poszczegolnych kategoriach:
+- Wiek konta: {$miesiace} miesiecy → {$fpw} pkt (maks. 6 pkt, stawka: 0.5 pkt za kazdy miesiac)
+- Commity: {$liczba_c} commitow → {$fpc} pkt (maks. 2 pkt, stawka: 0.1 pkt za kazdy commit)
+- Repozytoria: {$liczba_repo} publicznych repo → {$fpr} pkt (maks. 1 pkt, stawka: 0.5 pkt za kazde repo)
+- Gwiazdki: {$suma_gwiazdek} gwiazdek → {$fpg} pkt (maks. 5 pkt, stawka: 0.1 pkt za kazda gwiazdke)
+
+Napisz po polsku:
+1. Krotkie, motywujace zdanie otwierajace.
+2. Konkretny plan krok po kroku — dla kazdej kategorii gdzie nie osiagam maksimum napisz DOKLADNIE co mam zrobic (np. ile commitow jeszcze zrobic, ile gwiazdek zdobyc, jak to osiagnac). Zacznij od kategorii z najwiekszym potencjalem zysku.
+3. Jedno zdanie zamykajace zachecajace do dzialania.
+Pisz bezposrednio do mnie, bez owijania w bawelne.",
+
+        'en' => "I am GitHub user '{$login}'. In the Pollinations Seed Plan qualification I have {$s} out of 14 possible points (qualification threshold: 8 pts). My level: {$poziom_nr} ({$nazwa_poziomu}). I need {$b} more points.
+
+My current scores per category:
+- Account age: {$miesiace} months → {$fpw} pts (max 6 pts, rate: 0.5 pts per month)
+- Commits: {$liczba_c} commits → {$fpc} pts (max 2 pts, rate: 0.1 pts per commit)
+- Repositories: {$liczba_repo} public repos → {$fpr} pts (max 1 pt, rate: 0.5 pts per repo)
+- Stars: {$suma_gwiazdek} stars → {$fpg} pts (max 5 pts, rate: 0.1 pts per star)
+
+Write in English:
+1. A short motivating opening sentence.
+2. A concrete step-by-step plan — for each category where I haven't reached the maximum, write EXACTLY what I need to do (e.g. how many more commits, how many more stars, and how to achieve that). Start with the category with the highest gain potential.
+3. One closing sentence encouraging action.
+Address me directly, no fluff.",
+
+        'de' => "Ich bin GitHub-Nutzer '{$login}'. Bei der Pollinations Seed Plan Qualifikation habe ich {$s} von 14 möglichen Punkten (Qualifikationsschwelle: 8 Pkt). Mein Level: {$poziom_nr} ({$nazwa_poziomu}). Mir fehlen {$b} Punkte.
+
+Meine aktuellen Ergebnisse je Kategorie:
+- Kontoalter: {$miesiace} Monate → {$fpw} Pkt (max. 6 Pkt, Rate: 0,5 Pkt pro Monat)
+- Commits: {$liczba_c} Commits → {$fpc} Pkt (max. 2 Pkt, Rate: 0,1 Pkt pro Commit)
+- Repositories: {$liczba_repo} öffentliche Repos → {$fpr} Pkt (max. 1 Pkt, Rate: 0,5 Pkt pro Repo)
+- Sterne: {$suma_gwiazdek} Sterne → {$fpg} Pkt (max. 5 Pkt, Rate: 0,1 Pkt pro Stern)
+
+Schreibe auf Deutsch:
+1. Einen kurzen, motivierenden Eröffnungssatz.
+2. Einen konkreten Schritt-für-Schritt-Plan — für jede Kategorie, in der ich das Maximum noch nicht erreicht habe, schreibe GENAU, was ich tun soll (z. B. wie viele Commits noch fehlen, wie viele Sterne ich brauche und wie ich das erreichen kann). Beginne mit der Kategorie mit dem größten Gewinnpotenzial.
+3. Einen abschließenden Satz, der zur Tat auffordert.
+Sprich mich direkt an, ohne Umschweife.",
     ];
     return $prompty[$jezyk] ?? $prompty['en'];
 }
@@ -187,7 +247,7 @@ function buduj_prompt_ai($jezyk, $login, $miesiace, $pw, $liczba_c, $pc, $liczba
 // Wywolanie Pollinations API z modelem perplexity-reasoning
 function pobierz_porade_ai($prompt, $klucz_api) {
     $payload = json_encode([
-        'model'      => 'perplexity-reasoning',
+        'model'      => 'deepseek',
         'messages'   => [
             [
                 'role'    => 'system',
@@ -292,6 +352,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
         $dane_c     = pobierz_dane("https://api.github.com/search/commits?q=author:{$uzytkownik}", $naglowki_c);
         $liczba_c   = $dane_c ? $dane_c['total_count'] : 0;
         $punkty_c   = min($liczba_c * 0.1, 2.0);
+
 
         $suma                 = $punkty_wiek + $punkty_repo + $punkty_gwiazdki + $punkty_c;
         $poziom               = oblicz_poziom($suma);
@@ -710,6 +771,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
         }
         .przycisk-wyczysc-klucz:hover { color: #922b21; }
 
+        /* Status aktywnosci 90 dni */
+        .ramka-aktywnosc {
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .aktywnosc-ok   { background: #eafaf1; color: #1e8449; }
+        .aktywnosc-brak { background: #fef5e7; color: #9a4a00; border: 1px solid #f0c070; }
+
+        /* Drugorzedna linia w ramce brakuje */
+        .linia-brakuje--drugorzedna {
+            font-size: 13px;
+            color: #999;
+        }
+        .linia-brakuje--drugorzedna strong { font-size: 13px; color: #999; }
+
+        /* Wskazowki */
+        .sekcja-wskazowek { margin-bottom: 20px; }
+        .wiersz-wskazowki {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 6px;
+            line-height: 1.45;
+        }
+        .ikona-wskazowki { flex-shrink: 0; font-size: 10px; margin-top: 3px; }
+
         /* Blad glowny */
         .blad-glowny {
             background: #fdf0f0;
@@ -853,16 +945,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
             <?php else: ?>
                 <div class="ramka-brakuje brakuje">
                     <div class="linia-brakuje">
-                        <span><?php echo $t['do_kolejnego']; ?>:</span>
-                        <strong><?php echo number_format($w['brakuje_do_kolejnego'], 1); ?> <?php echo $t['pkt']; ?></strong>
-                    </div>
-                    <?php if ($poziom < 4): ?>
-                    <div class="linia-brakuje">
                         <span><?php echo $t['do_kwalifikacji']; ?>:</span>
                         <strong><?php echo number_format($w['brakuje_do_kwal'], 1); ?> <?php echo $t['pkt']; ?></strong>
                     </div>
+                    <?php if ($w['brakuje_do_kolejnego'] < $w['brakuje_do_kwal']): ?>
+                    <div class="linia-brakuje linia-brakuje--drugorzedna">
+                        <span><?php echo $t['do_kolejnego']; ?>:</span>
+                        <strong><?php echo number_format($w['brakuje_do_kolejnego'], 1); ?> <?php echo $t['pkt']; ?></strong>
+                    </div>
                     <?php endif; ?>
                 </div>
+            <?php endif; ?>
+
+            <!-- Wskazowki jak zdobywac punkty -->
+            <?php if ($poziom < 5): ?>
+            <div class="sekcja-wskazowek">
+                <div class="tytul-sekcji"><?php echo $t['wskazowki']; ?></div>
+                <?php
+                $wskazowki_kat = [
+                    'wiek'     => ['klucz' => 'wskazowka_wiek',     'procent' => $w['kategorie_wykresu']['wiek']['procent']],
+                    'gwiazdki' => ['klucz' => 'wskazowka_gwiazdki', 'procent' => $w['kategorie_wykresu']['gwiazdki']['procent']],
+                    'commity'  => ['klucz' => 'wskazowka_commity',  'procent' => $w['kategorie_wykresu']['commity']['procent']],
+                    'repo'     => ['klucz' => 'wskazowka_repo',     'procent' => $w['kategorie_wykresu']['repo']['procent']],
+                ];
+                // Sortuj: najpierw kategorie z najmniejszym wypelnieniem
+                uasort($wskazowki_kat, fn($a, $b) => $a['procent'] <=> $b['procent']);
+                foreach ($wskazowki_kat as $wsk):
+                ?>
+                <div class="wiersz-wskazowki">
+                    <span class="ikona-wskazowki" style="color: <?php echo kolor_paska_kategorii($wsk['procent']); ?>">●</span>
+                    <span><?php echo $t[$wsk['klucz']]; ?></span>
+                </div>
+                <?php endforeach; ?>
+            </div>
             <?php endif; ?>
 
             <!-- Karta porady AI -->
