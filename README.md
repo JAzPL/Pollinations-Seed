@@ -15,7 +15,7 @@ Narzędzie analizuje publiczny profil GitHub podanego użytkownika, przelicza pu
 
 - aktualny **poziom** (1–5) z kolorowym oznaczeniem,
 - **miniwykres słupkowy** czterech kategorii punktowych,
-- **pasek postępu** w kierunku kwalifikacji (próg: 8 pkt),
+- **pasek postępu** w kierunku kwalifikacji (próg: 7 pkt),
 - ile punktów brakuje **do kwalifikacji** i opcjonalnie **do następnego poziomu**,
 - **poradę AI** z konkretnym planem krok po kroku — posortowaną od kategorii z największym potencjałem zysku,
 - **wskazówki** jak zdobywać punkty w każdej kategorii.
@@ -26,10 +26,10 @@ Narzędzie analizuje publiczny profil GitHub podanego użytkownika, przelicza pu
 |-------------------|--------------------------|---------------|
 | Wiek konta        | miesiące × 0,5           | 6,0           |
 | Gwiazdki GitHub   | gwiazdki × 0,1           | 5,0           |
-| Commity           | commity × 0,1            | 2,0           |
+| Commity           | commity × 0,1            | 3,0           |
 | Publiczne repo    | repo × 0,5               | 1,0           |
-| **Łącznie**       |                          | **14,0**      |
-| **Próg kwalifikacji** |                      | **8,0**       |
+| **Łącznie**       |                          | **15,0**      |
+| **Próg kwalifikacji** |                      | **7,0**       |
 
 ### Poziomy
 
@@ -38,8 +38,8 @@ Narzędzie analizuje publiczny profil GitHub podanego użytkownika, przelicza pu
 | 1      | Początkujący         | 0–2          |
 | 2      | Amator               | 2–4          |
 | 3      | Średniozaawansowany  | 4–6          |
-| 4      | Zaawansowany         | 6–8          |
-| 5      | Zakwalifikowany 🎉   | 8+           |
+| 4      | Zaawansowany         | 6–7          |
+| 5      | Zakwalifikowany 🎉   | 7+           |
 
 ### Integracja AI
 
@@ -93,7 +93,7 @@ This tool analyzes a public GitHub user profile, calculates points according to 
 
 - current **level** (1–5) with color-coded badge,
 - **mini bar chart** of four scoring categories,
-- **progress bar** toward qualification (threshold: 8 pts),
+- **progress bar** toward qualification (threshold: 7 pts),
 - how many points are missing **to qualify** and optionally **to the next level**,
 - an **AI guide** with a concrete step-by-step action plan — sorted from the category with the highest gain potential,
 - **tips** on how to earn points in each category.
@@ -104,10 +104,10 @@ This tool analyzes a public GitHub user profile, calculates points according to 
 |-------------------|--------------------------|------------|
 | Account age       | months × 0.5             | 6.0        |
 | GitHub stars      | stars × 0.1              | 5.0        |
-| Commits           | commits × 0.1            | 2.0        |
+| Commits           | commits × 0.1            | 3.0        |
 | Public repos      | repos × 0.5              | 1.0        |
-| **Total**         |                          | **14.0**   |
-| **Qualification** |                          | **8.0**    |
+| **Total**         |                          | **15.0**   |
+| **Qualification** |                          | **7.0**    |
 
 ### Levels
 
@@ -116,8 +116,8 @@ This tool analyzes a public GitHub user profile, calculates points according to 
 | 1     | Beginner      | 0–2              |
 | 2     | Amateur       | 2–4              |
 | 3     | Intermediate  | 4–6              |
-| 4     | Advanced      | 6–8              |
-| 5     | Qualified 🎉  | 8+               |
+| 4     | Advanced      | 6–7              |
+| 5     | Qualified 🎉  | 7+               |
 
 ### AI Integration
 
@@ -171,7 +171,7 @@ Dieses Tool analysiert ein öffentliches GitHub-Profil, berechnet Punkte nach de
 
 - aktuelles **Level** (1–5) mit farbiger Badge,
 - **Mini-Balkendiagramm** der vier Punktekategorien,
-- **Fortschrittsbalken** zur Qualifikation (Schwelle: 8 Pkt.),
+- **Fortschrittsbalken** zur Qualifikation (Schwelle: 7 Pkt.),
 - wie viele Punkte **zur Qualifikation** und optional **zum nächsten Level** fehlen,
 - einen **KI-Ratgeber** mit konkretem Schritt-für-Schritt-Plan — sortiert nach der Kategorie mit dem größten Verbesserungspotenzial,
 - **Tipps** wie man in jeder Kategorie Punkte sammelt.
@@ -182,10 +182,10 @@ Dieses Tool analysiert ein öffentliches GitHub-Profil, berechnet Punkte nach de
 |--------------------|---------------------------|-------------|
 | Kontoalter         | Monate × 0,5              | 6,0         |
 | GitHub-Sterne      | Sterne × 0,1              | 5,0         |
-| Commits            | Commits × 0,1             | 2,0         |
+| Commits            | Commits × 0,1             | 3,0         |
 | Öffentliche Repos  | Repos × 0,5               | 1,0         |
-| **Gesamt**         |                           | **14,0**    |
-| **Qualifikation**  |                           | **8,0**     |
+| **Gesamt**         |                           | **15,0**    |
+| **Qualifikation**  |                           | **7,0**     |
 
 ### Level-System
 
@@ -194,8 +194,8 @@ Dieses Tool analysiert ein öffentliches GitHub-Profil, berechnet Punkte nach de
 | 1     | Anfänger          | 0–2            |
 | 2     | Amateur           | 2–4            |
 | 3     | Fortgeschrittener | 4–6            |
-| 4     | Experte           | 6–8            |
-| 5     | Qualifiziert 🎉   | 8+             |
+| 4     | Experte           | 6–7            |
+| 5     | Qualifiziert 🎉   | 7+             |
 
 ### KI-Integration
 
