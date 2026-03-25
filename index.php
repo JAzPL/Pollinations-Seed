@@ -43,7 +43,7 @@ $jezyki = [
         'wskazowki'           => 'Jak zdobyć więcej punktów',
         'wskazowka_wiek'      => 'Konto musi mieć ≥12 miesięcy dla pełnych 6 pkt (0.5 pkt/miesiąc)',
         'wskazowka_gwiazdki'  => 'Publikuj i promuj projekty — każda gwiazdka = 0.1 pkt (maks. 5 pkt)',
-        'wskazowka_commity'   => 'Commituj regularnie — każde 10 commitów = 1 pkt (maks. 2 pkt)',
+        'wskazowka_commity'   => 'Commituj regularnie — każde 10 commitów = 1 pkt (maks. 3 pkt)',
         'wskazowka_repo'      => 'Miej ≥2 publiczne repozytoria dla maks. 1 pkt',
         'poziomy'             => [
             1 => 'Początkujący',
@@ -84,7 +84,7 @@ $jezyki = [
         'wskazowki'           => 'How to earn more points',
         'wskazowka_wiek'      => 'Account must be ≥12 months old for full 6 pts (0.5 pts/month)',
         'wskazowka_gwiazdki'  => 'Publish & share projects — each star = 0.1 pts (max 5 pts)',
-        'wskazowka_commity'   => 'Commit regularly — every 10 commits = 1 pt (max 2 pts)',
+        'wskazowka_commity'   => 'Commit regularly — every 10 commits = 1 pt (max 3 pts)',
         'wskazowka_repo'      => 'Have ≥2 public repositories for max 1 pt',
         'poziomy'             => [
             1 => 'Beginner',
@@ -126,7 +126,7 @@ $jezyki = [
         'wskazowki'           => 'So sammelst du mehr Punkte',
         'wskazowka_wiek'      => 'Konto muss ≥12 Monate alt sein für volle 6 Pkt (0,5 Pkt/Monat)',
         'wskazowka_gwiazdki'  => 'Projekte veröffentlichen & teilen — jeder Stern = 0,1 Pkt (max. 5 Pkt)',
-        'wskazowka_commity'   => 'Regelmäßig committen — je 10 Commits = 1 Pkt (max. 2 Pkt)',
+        'wskazowka_commity'   => 'Regelmäßig committen — je 10 Commits = 1 Pkt (max. 3 Pkt)',
         'wskazowka_repo'      => 'Mindestens 2 öffentliche Repos für max. 1 Pkt',
         'poziomy'             => [
             1 => 'Anfänger',
@@ -155,7 +155,7 @@ function pobierz_dane($url, $naglowki) {
 }
 
 function oblicz_poziom($suma) {
-    if ($suma >= 8.0) return 5;
+    if ($suma >= 7.0) return 5;
     if ($suma >= 6.0) return 4;
     if ($suma >= 4.0) return 3;
     if ($suma >= 2.0) return 2;
@@ -164,7 +164,7 @@ function oblicz_poziom($suma) {
 
 // Ile punktow brakuje do kolejnego progu poziomu
 function oblicz_brakuje_do_kolejnego($suma, $poziom) {
-    $progi = [1 => 2.0, 2 => 4.0, 3 => 6.0, 4 => 8.0];
+    $progi = [1 => 2.0, 2 => 4.0, 3 => 6.0, 4 => 7.0];
     if ($poziom >= 5 || !isset($progi[$poziom])) return 0.0;
     return max(0.0, $progi[$poziom] - $suma);
 }
@@ -199,11 +199,11 @@ function buduj_prompt_ai($jezyk, $login, $miesiace, $pw, $liczba_c, $pc, $liczba
     $fpg  = number_format($pg, 1);
 
     $prompty = [
-        'pl' => "Jestem uzytkownikiem GitHub '{$login}'. W kwalifikacji Pollinations Seed Plan mam {$s} punktow na 14 mozliwych (prog kwalifikacji: 8 pkt). Moj poziom: {$poziom_nr} ({$nazwa_poziomu}). Brakuje mi {$b} pkt.
+        'pl' => "Jestem uzytkownikiem GitHub '{$login}'. W kwalifikacji Pollinations Seed Plan mam {$s} punktow na 15 mozliwych (prog kwalifikacji: 7 pkt). Moj poziom: {$poziom_nr} ({$nazwa_poziomu}). Brakuje mi {$b} pkt.
 
 Moje wyniki w poszczegolnych kategoriach:
 - Wiek konta: {$miesiace} miesiecy → {$fpw} pkt (maks. 6 pkt, stawka: 0.5 pkt za kazdy miesiac)
-- Commity: {$liczba_c} commitow → {$fpc} pkt (maks. 2 pkt, stawka: 0.1 pkt za kazdy commit)
+- Commity: {$liczba_c} commitow → {$fpc} pkt (maks. 3 pkt, stawka: 0.1 pkt za kazdy commit)
 - Repozytoria: {$liczba_repo} publicznych repo → {$fpr} pkt (maks. 1 pkt, stawka: 0.5 pkt za kazde repo)
 - Gwiazdki: {$suma_gwiazdek} gwiazdek → {$fpg} pkt (maks. 5 pkt, stawka: 0.1 pkt za kazda gwiazdke)
 
@@ -213,11 +213,11 @@ Napisz po polsku:
 3. Jedno zdanie zamykajace zachecajace do dzialania.
 Pisz bezposrednio do mnie, bez owijania w bawelne.",
 
-        'en' => "I am GitHub user '{$login}'. In the Pollinations Seed Plan qualification I have {$s} out of 14 possible points (qualification threshold: 8 pts). My level: {$poziom_nr} ({$nazwa_poziomu}). I need {$b} more points.
+        'en' => "I am GitHub user '{$login}'. In the Pollinations Seed Plan qualification I have {$s} out of 15 possible points (qualification threshold: 7 pts). My level: {$poziom_nr} ({$nazwa_poziomu}). I need {$b} more points.
 
 My current scores per category:
 - Account age: {$miesiace} months → {$fpw} pts (max 6 pts, rate: 0.5 pts per month)
-- Commits: {$liczba_c} commits → {$fpc} pts (max 2 pts, rate: 0.1 pts per commit)
+- Commits: {$liczba_c} commits → {$fpc} pts (max 3 pts, rate: 0.1 pts per commit)
 - Repositories: {$liczba_repo} public repos → {$fpr} pts (max 1 pt, rate: 0.5 pts per repo)
 - Stars: {$suma_gwiazdek} stars → {$fpg} pts (max 5 pts, rate: 0.1 pts per star)
 
@@ -227,11 +227,11 @@ Write in English:
 3. One closing sentence encouraging action.
 Address me directly, no fluff.",
 
-        'de' => "Ich bin GitHub-Nutzer '{$login}'. Bei der Pollinations Seed Plan Qualifikation habe ich {$s} von 14 möglichen Punkten (Qualifikationsschwelle: 8 Pkt). Mein Level: {$poziom_nr} ({$nazwa_poziomu}). Mir fehlen {$b} Punkte.
+        'de' => "Ich bin GitHub-Nutzer '{$login}'. Bei der Pollinations Seed Plan Qualifikation habe ich {$s} von 15 möglichen Punkten (Qualifikationsschwelle: 7 Pkt). Mein Level: {$poziom_nr} ({$nazwa_poziomu}). Mir fehlen {$b} Punkte.
 
 Meine aktuellen Ergebnisse je Kategorie:
 - Kontoalter: {$miesiace} Monate → {$fpw} Pkt (max. 6 Pkt, Rate: 0,5 Pkt pro Monat)
-- Commits: {$liczba_c} Commits → {$fpc} Pkt (max. 2 Pkt, Rate: 0,1 Pkt pro Commit)
+- Commits: {$liczba_c} Commits → {$fpc} Pkt (max. 3 Pkt, Rate: 0,1 Pkt pro Commit)
 - Repositories: {$liczba_repo} öffentliche Repos → {$fpr} Pkt (max. 1 Pkt, Rate: 0,5 Pkt pro Repo)
 - Sterne: {$suma_gwiazdek} Sterne → {$fpg} Pkt (max. 5 Pkt, Rate: 0,1 Pkt pro Stern)
 
@@ -301,6 +301,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['ajax_ai'])) {
     }
 
     $d           = $_SESSION[$klucz_sesji];
+
+    // Zakwalifikowany nie potrzebuje porady
+    if (isset($d['poziom']) && $d['poziom'] >= 5) {
+        die(json_encode(['tekst' => null]));
+    }
+
     $klucz_cache = 'ai_' . md5($d['login'] . $d['jezyk'] . round($d['suma'], 1));
 
     // Wymuzone odswiezenie kasuje cache
@@ -351,14 +357,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
         $naglowki_c = array_merge($naglowki, ['Accept: application/vnd.github.cloak-preview+json']);
         $dane_c     = pobierz_dane("https://api.github.com/search/commits?q=author:{$uzytkownik}", $naglowki_c);
         $liczba_c   = $dane_c ? $dane_c['total_count'] : 0;
-        $punkty_c   = min($liczba_c * 0.1, 2.0);
+        $punkty_c   = min($liczba_c * 0.1, 3.0);
 
 
         $suma                 = $punkty_wiek + $punkty_repo + $punkty_gwiazdki + $punkty_c;
         $poziom               = oblicz_poziom($suma);
-        $brakuje_do_kwal      = max(0.0, 8.0 - $suma);
+        $brakuje_do_kwal      = max(0.0, 7.0 - $suma);
         $brakuje_do_kolejnego = oblicz_brakuje_do_kolejnego($suma, $poziom);
-        $procent_postep       = min(100, (int) round(($suma / 8.0) * 100));
+        $procent_postep       = min(100, (int) round(($suma / 7.0) * 100));
         list($kolor_ciemny, $kolor_jasny) = kolor_poziomu($poziom);
         $nazwa_poziomu = $t['poziomy'][$poziom];
         $login         = htmlspecialchars($dane_uzytkownika['login']);
@@ -929,7 +935,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
             <div class="sekcja-postepu">
                 <div class="etykieta-postepu">
                     <span><?php echo $t['postep']; ?></span>
-                    <span><?php echo number_format($w['suma'], 1); ?> / 8.0 <?php echo $t['pkt']; ?></span>
+                    <span><?php echo number_format($w['suma'], 1); ?> / 7.0 <?php echo $t['pkt']; ?></span>
                 </div>
                 <div class="pasek-postepu">
                     <div class="wypelnienie-paska"
@@ -980,6 +986,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
             </div>
             <?php endif; ?>
 
+            <?php if ($poziom < 5): ?>
             <!-- Karta porady AI -->
             <div class="karta-ai">
                 <div class="naglowek-ai-wiersz">
@@ -1002,6 +1009,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
             <input type="hidden" id="jezyk-ukryty"  value="<?php echo $wybrany_jezyk; ?>">
             <input type="hidden" id="poziom-ukryty" value="<?php echo $poziom; ?>">
             <input type="hidden" id="tekst-blad-ai" value="<?php echo htmlspecialchars($t['blad_ai']); ?>">
+            <?php endif; ?>
 
         <?php endif; ?>
     </div>
