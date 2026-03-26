@@ -1,12 +1,30 @@
 <?php
 session_start();
 
-// --- Zarzadzanie kluczem API Pollinations w sesji ---
-if (!empty($_POST['klucz_api'])) {
-    $_SESSION['pollinations_klucz'] = trim($_POST['klucz_api']);
+// --- BYOP: zapisz klucz i pobierz login GitHub z userinfo ---
+if (!empty($_POST['zapisz_byop_klucz'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    $k = trim($_POST['byop_klucz'] ?? '');
+    if ($k && str_starts_with($k, 'sk_')) {
+        $_SESSION['pollinations_klucz'] = $k;
+        $ch = curl_init('https://enter.pollinations.ai/api/device/userinfo');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $k]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $resp = curl_exec($ch);
+        curl_close($ch);
+        $userinfo     = $resp ? json_decode($resp, true) : null;
+        $github_login = $userinfo['preferred_username'] ?? null;
+        if ($github_login) {
+            $_SESSION['github_login'] = $github_login;
+        }
+        die(json_encode(['ok' => true, 'login' => $github_login]));
+    }
+    die(json_encode(['ok' => false]));
 }
 if (isset($_POST['wyczysc_klucz'])) {
     unset($_SESSION['pollinations_klucz']);
+    unset($_SESSION['github_login']);
 }
 $aktywny_klucz_api = $_SESSION['pollinations_klucz'] ?? '';
 
@@ -14,7 +32,7 @@ $aktywny_klucz_api = $_SESSION['pollinations_klucz'] ?? '';
 $jezyki = [
     'pl' => [
         'tytul'               => 'Kwalifikacja do Planu Seed',
-        'etykieta_uzytkownik' => 'Nazwa użytkownika GitHub:',
+
         'przycisk'            => 'Sprawdź',
         'aktualny_poziom'     => 'Twój aktualny poziom',
         'do_kolejnego'        => 'Do następnego poziomu',
@@ -33,18 +51,17 @@ $jezyki = [
         'kat_commity'         => 'Commity',
         'kat_repo'            => 'Repozytoria',
         'kat_gwiazdki'        => 'Gwiazdki',
-        'etykieta_klucz_api'  => 'Klucz API Pollinations:',
-        'klucz_placeholder'   => 'Wklej klucz API…',
-        'klucz_zapisany'      => '✓ Klucz zapisany w sesji',
-        'klucz_brak'          => '⚠ Brak klucza — AI może nie działać',
-        'wyczysc_klucz'       => 'Wyczyść',
+        'byop_zaloguj'        => '🌿 Zaloguj przez Pollinations (bezpłatnie)',
+        'byop_zalogowany'     => '✓ Zalogowany przez Pollinations',
+        'byop_info'           => 'Zaloguj się, aby AI mogło doradzać (za darmo, własny limit)',
+        'wyczysc_klucz'       => 'Wyloguj',
         'aktywnosc_ok'        => '✓ Publiczna aktywność w ostatnich 90 dniach: OK',
         'aktywnosc_brak'      => '⚠ Brak publicznej aktywności w ostatnich 90 dniach — Pollinations może nie uznać kwalifikacji',
         'wskazowki'           => 'Jak zdobyć więcej punktów',
         'wskazowka_wiek'      => 'Konto musi mieć ≥12 miesięcy dla pełnych 6 pkt (0.5 pkt/miesiąc)',
-        'wskazowka_gwiazdki'  => 'Publikuj i promuj projekty — każda gwiazdka = 0.1 pkt (maks. 5 pkt)',
-        'wskazowka_commity'   => 'Commituj regularnie — każde 10 commitów = 1 pkt (maks. 3 pkt)',
-        'wskazowka_repo'      => 'Miej ≥2 publiczne repozytoria dla maks. 1 pkt',
+        'wskazowka_gwiazdki'  => 'Publikuj i promuj projekty — każda gwiazdka na oryginalnym repo = 0.1 pkt (maks. 5 pkt)',
+        'wskazowka_commity'   => 'Commituj regularnie — każdy commit z ostatnich 90 dni = 0.1 pkt (maks. 3 pkt)',
+        'wskazowka_repo'      => 'Miej ≥2 oryginalne, niepuste publiczne repozytoria dla maks. 1 pkt',
         'poziomy'             => [
             1 => 'Początkujący',
             2 => 'Amator',
@@ -55,7 +72,7 @@ $jezyki = [
     ],
     'en' => [
         'tytul'               => 'Seed Plan Qualification',
-        'etykieta_uzytkownik' => 'GitHub Username:',
+
         'przycisk'            => 'Check',
         'aktualny_poziom'     => 'Your current level',
         'do_kolejnego'        => 'To next level',
@@ -74,18 +91,17 @@ $jezyki = [
         'kat_commity'         => 'Commits',
         'kat_repo'            => 'Repositories',
         'kat_gwiazdki'        => 'Stars',
-        'etykieta_klucz_api'  => 'Pollinations API Key:',
-        'klucz_placeholder'   => 'Paste your API key…',
-        'klucz_zapisany'      => '✓ Key saved in session',
-        'klucz_brak'          => '⚠ No key — AI may not work',
-        'wyczysc_klucz'       => 'Clear',
+        'byop_zaloguj'        => '🌿 Login via Pollinations (free)',
+        'byop_zalogowany'     => '✓ Logged in via Pollinations',
+        'byop_info'           => 'Log in so AI can advise you (free, your own quota)',
+        'wyczysc_klucz'       => 'Logout',
         'aktywnosc_ok'        => '✓ Public activity in last 90 days: OK',
         'aktywnosc_brak'      => '⚠ No public activity in the last 90 days — Pollinations may not count your qualification',
         'wskazowki'           => 'How to earn more points',
         'wskazowka_wiek'      => 'Account must be ≥12 months old for full 6 pts (0.5 pts/month)',
-        'wskazowka_gwiazdki'  => 'Publish & share projects — each star = 0.1 pts (max 5 pts)',
-        'wskazowka_commity'   => 'Commit regularly — every 10 commits = 1 pt (max 3 pts)',
-        'wskazowka_repo'      => 'Have ≥2 public repositories for max 1 pt',
+        'wskazowka_gwiazdki'  => 'Publish & share projects — each star on original repos = 0.1 pts (max 5 pts)',
+        'wskazowka_commity'   => 'Commit regularly — each commit in the last 90 days = 0.1 pt (max 3 pts)',
+        'wskazowka_repo'      => 'Have ≥2 original, non-empty public repositories for max 1 pt',
         'poziomy'             => [
             1 => 'Beginner',
             2 => 'Amateur',
@@ -96,7 +112,7 @@ $jezyki = [
     ],
     'de' => [
         'tytul'               => 'Seed-Plan Qualifikation',
-        'etykieta_uzytkownik' => 'GitHub-Benutzername:',
+
         'przycisk'            => 'Prüfen',
         'aktualny_poziom'     => 'Dein aktuelles Level',
         'do_kolejnego'        => 'Zum nächsten Level fehlen',
@@ -115,19 +131,18 @@ $jezyki = [
         'kat_commity'         => 'Commits',
         'kat_repo'            => 'Repositories',
         'kat_gwiazdki'        => 'Sterne',
-        'etykieta_klucz_api'  => 'Pollinations API-Schlüssel:',
-        'klucz_placeholder'   => 'API-Schlüssel einfügen…',
-        'klucz_zapisany'      => '✓ Schlüssel in Session gespeichert',
-        'klucz_brak'          => '⚠ Kein Schlüssel — KI funktioniert möglicherweise nicht',
-        'wyczysc_klucz'       => 'Löschen',
+        'byop_zaloguj'        => '🌿 Anmelden über Pollinations (kostenlos)',
+        'byop_zalogowany'     => '✓ Angemeldet über Pollinations',
+        'byop_info'           => 'Melde dich an, damit die KI dir helfen kann (kostenlos, eigenes Kontingent)',
+        'wyczysc_klucz'       => 'Abmelden',
         'do_kolejnego'        => 'Zum nächsten Level',
         'aktywnosc_ok'        => '✓ Öffentliche Aktivität in den letzten 90 Tagen: OK',
         'aktywnosc_brak'      => '⚠ Keine öffentliche Aktivität in den letzten 90 Tagen — Pollinations erkennt deine Qualifikation möglicherweise nicht',
         'wskazowki'           => 'So sammelst du mehr Punkte',
         'wskazowka_wiek'      => 'Konto muss ≥12 Monate alt sein für volle 6 Pkt (0,5 Pkt/Monat)',
-        'wskazowka_gwiazdki'  => 'Projekte veröffentlichen & teilen — jeder Stern = 0,1 Pkt (max. 5 Pkt)',
-        'wskazowka_commity'   => 'Regelmäßig committen — je 10 Commits = 1 Pkt (max. 3 Pkt)',
-        'wskazowka_repo'      => 'Mindestens 2 öffentliche Repos für max. 1 Pkt',
+        'wskazowka_gwiazdki'  => 'Projekte veröffentlichen & teilen — jeder Stern auf Original-Repos = 0,1 Pkt (max. 5 Pkt)',
+        'wskazowka_commity'   => 'Regelmäßig committen — jeder Commit der letzten 90 Tage = 0,1 Pkt (max. 3 Pkt)',
+        'wskazowka_repo'      => 'Mindestens 2 originale, nicht-leere öffentliche Repos für max. 1 Pkt',
         'poziomy'             => [
             1 => 'Anfänger',
             2 => 'Amateur',
@@ -140,6 +155,11 @@ $jezyki = [
 
 $wybrany_jezyk = (isset($_POST['jezyk']) && isset($jezyki[$_POST['jezyk']])) ? $_POST['jezyk'] : 'pl';
 $t = $jezyki[$wybrany_jezyk];
+
+// --- URL do BYOP (Bring Your Own Pollen) ---
+$byop_redirect = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
+    . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+$byop_url = 'https://enter.pollinations.ai/authorize?redirect_url=' . urlencode($byop_redirect) . '&app_key=pk_l2Nq43Y3Jhvn6mCy';
 
 // --- Funkcje pomocnicze ---
 
@@ -203,9 +223,9 @@ function buduj_prompt_ai($jezyk, $login, $miesiace, $pw, $liczba_c, $pc, $liczba
 
 Moje wyniki w poszczegolnych kategoriach:
 - Wiek konta: {$miesiace} miesiecy → {$fpw} pkt (maks. 6 pkt, stawka: 0.5 pkt za kazdy miesiac)
-- Commity: {$liczba_c} commitow → {$fpc} pkt (maks. 3 pkt, stawka: 0.1 pkt za kazdy commit)
-- Repozytoria: {$liczba_repo} publicznych repo → {$fpr} pkt (maks. 1 pkt, stawka: 0.5 pkt za kazde repo)
-- Gwiazdki: {$suma_gwiazdek} gwiazdek → {$fpg} pkt (maks. 5 pkt, stawka: 0.1 pkt za kazda gwiazdke)
+- Commity (ostatnie 90 dni): {$liczba_c} commitow → {$fpc} pkt (maks. 3 pkt, stawka: 0.1 pkt za kazdy commit)
+- Repozytoria (oryginalne, niepuste): {$liczba_repo} repo → {$fpr} pkt (maks. 1 pkt, stawka: 0.5 pkt za kazde repo)
+- Gwiazdki (na oryginalnych repo): {$suma_gwiazdek} gwiazdek → {$fpg} pkt (maks. 5 pkt, stawka: 0.1 pkt za kazda gwiazdke)
 
 Napisz po polsku:
 1. Krotkie, motywujace zdanie otwierajace.
@@ -217,9 +237,9 @@ Pisz bezposrednio do mnie, bez owijania w bawelne.",
 
 My current scores per category:
 - Account age: {$miesiace} months → {$fpw} pts (max 6 pts, rate: 0.5 pts per month)
-- Commits: {$liczba_c} commits → {$fpc} pts (max 3 pts, rate: 0.1 pts per commit)
-- Repositories: {$liczba_repo} public repos → {$fpr} pts (max 1 pt, rate: 0.5 pts per repo)
-- Stars: {$suma_gwiazdek} stars → {$fpg} pts (max 5 pts, rate: 0.1 pts per star)
+- Commits (last 90 days): {$liczba_c} commits → {$fpc} pts (max 3 pts, rate: 0.1 pts per commit)
+- Repositories (original, non-empty): {$liczba_repo} repos → {$fpr} pts (max 1 pt, rate: 0.5 pts per repo)
+- Stars (on original repos): {$suma_gwiazdek} stars → {$fpg} pts (max 5 pts, rate: 0.1 pts per star)
 
 Write in English:
 1. A short motivating opening sentence.
@@ -231,9 +251,9 @@ Address me directly, no fluff.",
 
 Meine aktuellen Ergebnisse je Kategorie:
 - Kontoalter: {$miesiace} Monate → {$fpw} Pkt (max. 6 Pkt, Rate: 0,5 Pkt pro Monat)
-- Commits: {$liczba_c} Commits → {$fpc} Pkt (max. 3 Pkt, Rate: 0,1 Pkt pro Commit)
-- Repositories: {$liczba_repo} öffentliche Repos → {$fpr} Pkt (max. 1 Pkt, Rate: 0,5 Pkt pro Repo)
-- Sterne: {$suma_gwiazdek} Sterne → {$fpg} Pkt (max. 5 Pkt, Rate: 0,1 Pkt pro Stern)
+- Commits (letzte 90 Tage): {$liczba_c} Commits → {$fpc} Pkt (max. 3 Pkt, Rate: 0,1 Pkt pro Commit)
+- Repositories (originale, nicht-leere): {$liczba_repo} Repos → {$fpr} Pkt (max. 1 Pkt, Rate: 0,5 Pkt pro Repo)
+- Sterne (auf Original-Repos): {$suma_gwiazdek} Sterne → {$fpg} Pkt (max. 5 Pkt, Rate: 0,1 Pkt pro Stern)
 
 Schreibe auf Deutsch:
 1. Einen kurzen, motivierenden Eröffnungssatz.
@@ -331,9 +351,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['ajax_ai'])) {
 
 // --- Przetwarzanie formularza glownego ---
 $wyniki            = null;
-$uzytkownik_github = isset($_POST['uzytkownik_github']) ? trim($_POST['uzytkownik_github']) : '';
+$uzytkownik_github = $_SESSION['github_login'] ?? '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset($_POST['onchange'])) {
+if ($uzytkownik_github !== '' && !isset($_POST['onchange'])) {
     $uzytkownik = urlencode($uzytkownik_github);
     $naglowki   = ['User-Agent: PHP-Seed-Checker', 'Accept: application/vnd.github.v3+json'];
 
@@ -346,18 +366,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
         $miesiace         = ($roznica->y * 12) + $roznica->m;
         $punkty_wiek      = min($miesiace * 0.5, 6.0);
 
-        $liczba_repo     = $dane_uzytkownika['public_repos'];
+        // Repozytoria: tylko oryginalne (nie forki) i niepuste
+        $dane_repo       = pobierz_dane("https://api.github.com/users/{$uzytkownik}/repos?per_page=100&type=owner", $naglowki);
+        $oryginalne_repo = $dane_repo ? array_filter($dane_repo, fn($r) => !$r['fork'] && $r['size'] > 0) : [];
+        $liczba_repo     = count($oryginalne_repo);
         $punkty_repo     = min($liczba_repo * 0.5, 1.0);
 
-        $dane_repo       = pobierz_dane("https://api.github.com/users/{$uzytkownik}/repos?per_page=100", $naglowki);
+        // Gwiazdki: tylko z oryginalnych niepustych repo
         $suma_gwiazdek   = 0;
-        if ($dane_repo) foreach ($dane_repo as $r) $suma_gwiazdek += $r['stargazers_count'];
+        foreach ($oryginalne_repo as $r) $suma_gwiazdek += $r['stargazers_count'];
         $punkty_gwiazdki = min($suma_gwiazdek * 0.1, 5.0);
 
-        $naglowki_c = array_merge($naglowki, ['Accept: application/vnd.github.cloak-preview+json']);
-        $dane_c     = pobierz_dane("https://api.github.com/search/commits?q=author:{$uzytkownik}", $naglowki_c);
-        $liczba_c   = $dane_c ? $dane_c['total_count'] : 0;
-        $punkty_c   = min($liczba_c * 0.1, 3.0);
+        // Commity: tylko ostatnie 90 dni
+        $naglowki_c  = array_merge($naglowki, ['Accept: application/vnd.github.cloak-preview+json']);
+        $data_90_dni = (new DateTime())->modify('-90 days')->format('Y-m-d');
+        $dane_c      = pobierz_dane("https://api.github.com/search/commits?q=author:{$uzytkownik}+committer-date:>={$data_90_dni}", $naglowki_c);
+        $liczba_c    = $dane_c ? $dane_c['total_count'] : 0;
+        $punkty_c    = min($liczba_c * 0.1, 3.0);
 
 
         $suma                 = $punkty_wiek + $punkty_repo + $punkty_gwiazdki + $punkty_c;
@@ -393,7 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
         $kategorie_wykresu = [
             'wiek'     => ['wartosc' => $punkty_wiek,     'maks' => 6.0, 'procent' => min(100, ($punkty_wiek     / 6.0) * 100)],
             'gwiazdki' => ['wartosc' => $punkty_gwiazdki, 'maks' => 5.0, 'procent' => min(100, ($punkty_gwiazdki / 5.0) * 100)],
-            'commity'  => ['wartosc' => $punkty_c,        'maks' => 2.0, 'procent' => min(100, ($punkty_c        / 2.0) * 100)],
+            'commity'  => ['wartosc' => $punkty_c,        'maks' => 3.0, 'procent' => min(100, ($punkty_c        / 3.0) * 100)],
             'repo'     => ['wartosc' => $punkty_repo,     'maks' => 1.0, 'procent' => min(100, ($punkty_repo     / 1.0) * 100)],
         ];
 
@@ -722,50 +747,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
             font-size: 14px;
         }
 
-        /* Pole klucza API */
-        .sekcja-klucza {
+        /* BYOP - logowanie przez Pollinations */
+        .sekcja-byop {
             margin-bottom: 14px;
-            padding: 14px 16px;
-            background: #f8f9fa;
+            padding: 12px 16px;
+            background: #f5f0fc;
             border-radius: 8px;
-            border: 1px solid #e8e8e8;
-        }
-        .wiersz-klucza {
+            border: 1px solid #d8c8f0;
             display: flex;
-            gap: 8px;
             align-items: center;
-        }
-        .wiersz-klucza input[type="password"],
-        .wiersz-klucza input[type="text"] {
-            flex: 1;
-            padding: 8px 12px;
-            font-size: 13px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-family: monospace;
-            letter-spacing: 0.5px;
-        }
-        .wiersz-klucza input:focus { outline: none; border-color: #764ba2; }
-        .przycisk-pokaz-klucz {
-            background: none;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            padding: 7px 10px;
-            cursor: pointer;
-            font-size: 13px;
-            flex-shrink: 0;
-            transition: background 0.15s;
-        }
-        .przycisk-pokaz-klucz:hover { background: #eee; }
-        .status-klucza {
-            display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-top: 7px;
-            font-size: 12px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        .status-klucza.zapisany { color: #27ae60; }
-        .status-klucza.brak     { color: #e67e22; }
+        .byop-info { font-size: 13px; color: #555; }
+        .byop-zalogowany-tekst { font-size: 13px; color: #27ae60; font-weight: 600; }
+        .przycisk-byop {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: opacity 0.2s;
+        }
+        .przycisk-byop:hover { opacity: 0.88; }
         .przycisk-wyczysc-klucz {
             background: none;
             border: none;
@@ -831,7 +842,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
                 <option value="en" <?php echo $wybrany_jezyk === 'en' ? 'selected' : ''; ?>>🇬🇧 English</option>
                 <option value="de" <?php echo $wybrany_jezyk === 'de' ? 'selected' : ''; ?>>🇩🇪 Deutsch</option>
             </select>
-            <input type="hidden" name="uzytkownik_github" value="<?php echo htmlspecialchars($uzytkownik_github); ?>">
         </form>
     </div>
 
@@ -841,32 +851,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
     <form method="POST">
         <input type="hidden" name="jezyk" value="<?php echo $wybrany_jezyk; ?>">
 
-        <!-- Pole klucza API Pollinations -->
-        <div class="sekcja-klucza">
-            <label for="pole-klucz-api"><?php echo $t['etykieta_klucz_api']; ?></label>
-            <div class="wiersz-klucza">
-                <input type="password" id="pole-klucz-api" name="klucz_api"
-                       placeholder="<?php echo htmlspecialchars($t['klucz_placeholder']); ?>"
-                       value="">
-                <button type="button" class="przycisk-pokaz-klucz" id="przycisk-pokaz-klucz"
-                        onclick="przelaczWidocznosc()">👁</button>
-            </div>
-            <div class="status-klucza <?php echo $aktywny_klucz_api ? 'zapisany' : 'brak'; ?>">
-                <span><?php echo $aktywny_klucz_api ? $t['klucz_zapisany'] : $t['klucz_brak']; ?></span>
-                <?php if ($aktywny_klucz_api): ?>
+        <!-- BYOP - logowanie przez Pollinations -->
+        <div class="sekcja-byop">
+            <?php if ($aktywny_klucz_api): ?>
+                <span class="byop-zalogowany-tekst"><?php echo $t['byop_zalogowany']; ?></span>
                 <button type="submit" name="wyczysc_klucz" value="1" class="przycisk-wyczysc-klucz">
                     <?php echo $t['wyczysc_klucz']; ?>
                 </button>
-                <?php endif; ?>
-            </div>
+            <?php else: ?>
+                <span class="byop-info"><?php echo $t['byop_info']; ?></span>
+                <a href="<?php echo htmlspecialchars($byop_url); ?>" class="przycisk-byop">
+                    <?php echo $t['byop_zaloguj']; ?>
+                </a>
+            <?php endif; ?>
         </div>
 
-        <div class="pole-input">
-            <label for="pole-uzytkownik"><?php echo $t['etykieta_uzytkownik']; ?></label>
-            <input type="text" id="pole-uzytkownik" name="uzytkownik_github" required
-                   value="<?php echo htmlspecialchars($uzytkownik_github); ?>">
-        </div>
+        <?php if ($aktywny_klucz_api && $uzytkownik_github): ?>
         <button type="submit" class="przycisk-sprawdz"><?php echo $t['przycisk']; ?></button>
+        <?php endif; ?>
     </form>
 
     <?php if ($wyniki): ?>
@@ -1020,11 +1022,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $uzytkownik_github !== '' && !isset
 <!-- Biblioteka confetti (celebracja zakwalifikowania) -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script>
-// Przelacza widocznosc klucza API (gwiazdki <-> tekst)
-function przelaczWidocznosc() {
-    var pole = document.getElementById('pole-klucz-api');
-    pole.type = (pole.type === 'password') ? 'text' : 'password';
-}
+// BYOP: przechwytuje klucz API z fragmentu URL po redirectie z Pollinations
+(function() {
+    var hash = window.location.hash;
+    if (hash && hash.indexOf('api_key=') !== -1) {
+        var params = new URLSearchParams(hash.slice(1));
+        var apiKey = params.get('api_key');
+        if (apiKey && apiKey.indexOf('sk_') === 0) {
+            fetch(window.location.pathname, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ zapisz_byop_klucz: '1', byop_klucz: apiKey }).toString()
+            }).then(function() {
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+                window.location.reload();
+            });
+        }
+    }
+})();
 
 document.addEventListener('DOMContentLoaded', function () {
     var kluczSesjiEl = document.getElementById('klucz-sesji');
@@ -1084,18 +1099,3 @@ function ladujAI(klucz, wymuszone) {
         if (przyciskOdswierz) przyciskOdswierz.disabled = false;
 
         if (dane.tekst) {
-            trescAI.innerHTML = marked.parse(dane.tekst);
-        } else {
-            trescAI.innerHTML = '<span class="blad-ai">' + tekstBladAI + '</span>';
-        }
-    })
-    .catch(function () {
-        spinnerAI.style.display = 'none';
-        trescAI.style.display   = 'block';
-        trescAI.innerHTML = '<span class="blad-ai">' + tekstBladAI + '</span>';
-        if (przyciskOdswierz) przyciskOdswierz.disabled = false;
-    });
-}
-</script>
-</body>
-</html>
